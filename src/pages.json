@@ -1,0 +1,94 @@
+{
+	"easycom": {
+		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [ 
+		{
+			"path": "pages/index/index",
+			"style": { 
+				"navigationBarTitleText": "测试",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/category/index",
+			"style": {
+				"navigationBarTitleText": "分类"
+			}
+		},
+		{
+			"path": "pages/my/index",
+			"style": {
+				"navigationBarTitleText": "",
+        "navigationBarBackgroundColor":"#40425b"
+        
+			}
+		}
+	],
+	"subPackages": [
+		{
+      "root": "goodsAdd",
+      "name": "pack2",
+      "pages": [
+        {
+					"path": "goods_add/index",
+					"style": {
+						"navigationBarTitleText": "新增货品",
+						"enablePullDownRefresh": true,
+            "navigationBarTextStyle":"black",
+        "navigationBarBackgroundColor":"#ffffff"
+					}
+				},
+        {
+					"path": "goods_add/goods_manage",
+					"style": {
+						"navigationBarTitleText": "货品管理",
+						"enablePullDownRefresh": true,
+            "navigationBarTextStyle":"black",
+        "navigationBarBackgroundColor":"#ffffff"
+					}
+				},
+        {
+					"path": "goods_add/goods_detail",
+					"style": {
+						"navigationBarTitleText": "编辑货品",
+						"enablePullDownRefresh": true,
+            "navigationBarTextStyle":"black",
+        "navigationBarBackgroundColor":"#ffffff"
+					}
+				}
+      ]
+    }
+	],
+	"globalStyle": { 
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "",
+		"navigationBarBackgroundColor": "#EA4350",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#8C8D8D",
+		"selectedColor": "#EA4350",
+		"backgroundColor": "#fafafa",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "/static/tabBar/home.png",
+				"selectedIconPath": "/static/tabBar/home-o.png"
+			},
+			{
+				"pagePath": "pages/category/index",
+				"text": "管理",
+				"iconPath": "/static/tabBar/category.png",
+				"selectedIconPath": "/static/tabBar/category-o.png"
+			},
+			{
+				"pagePath": "pages/my/index",
+				"text": "我的",
+				"iconPath": "/static/tabBar/my.png",
+				"selectedIconPath": "/static/tabBar/my-o.png"
+			}
+		]
+	}
+}
