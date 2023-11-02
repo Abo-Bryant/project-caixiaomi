@@ -1,5 +1,5 @@
 <template>
-  <view class="page">
+  <view class="page" v-if="goodsDetail.state === '启用'">
     <!-- 货品名称 -->
     <view class="goods-name">
       <view class="name-txet">货品名称</view>
@@ -78,6 +78,45 @@
         </view>
       </u-modal>
     </view>
+    <view class="goods-stop">
+      <u-modal :show="stopshow" showCancelButton confirmText="确定停用" confirmColor="#2bdc70" @cancel="stopCancel"
+        @confirm="stopConfirm">
+        <view class="slot-content">
+          <rich-text :nodes="`确定停用这个货品吗？停用后货品无法售卖`"></rich-text>
+        </view>
+      </u-modal>
+    </view>
+  </view>
+
+  <view class="stop-page" v-else>
+    <view class="stop-left">
+      <view class="stop-txt">货品名称 <text class="stop-text">{{ goodsDetail.goodsName }}</text></view>
+      <view class="stop-txt">包装类型<text class="stop-text type">{{ goodsDetail.packagingType }}</text></view>
+      <view class="stop-txt" v-if="goodsDetail.packagingType === '定装'">销售单价<text class="stop-text">{{ goodsDetail.sizeNum
+        +
+        '元/' + goodsDetail.size }}</text>
+      </view>
+      <view class="stop-txt" v-if="goodsDetail.packagingType === '散装'">销售单价<text class="stop-text">{{ goodsDetail.price +
+        '元/斤' }}</text>
+      </view>
+      <view class="stop-txt" v-if="goodsDetail.packagingType === '非定装'">销售单价<text class="stop-text">{{ goodsDetail.price +
+        '元/' + goodsDetail.tally }}</text>
+      </view>
+      <view class="stop-txt">货品分类<text class="stop-text">{{ goodsDetail.kind }}</text></view>
+    </view>
+    <view class="delOrStop">
+      <view class="del" @click="del">删除货品</view>
+      <view class="stop" @click="start">启用货品</view>
+    </view>
+    <!-- 删除弹出框 -->
+    <view class="goods-del">
+      <u-modal :show="delshow" showCancelButton confirmText="删除" confirmColor="#eb370c" @cancel="delCancel"
+        @confirm="delConfirm">
+        <view class="slot-content">
+          <rich-text :nodes="`确定删除这个货品吗？`"></rich-text>
+        </view>
+      </u-modal>
+    </view>
   </view>
 </template>
 
@@ -87,6 +126,7 @@ export default {
   name: '',
   data () {
     return {
+      stopshow: false,
       kindList: [],
       categoriesList: [],
       // valueName: '',
@@ -101,6 +141,7 @@ export default {
         ['件', '罐', '箱', '瓶', '盒', '袋', '包']
       ],
       goodsDetail: {
+        pid: '',
         goodsName: '',
         kind: '',
         packagingType: '',
@@ -113,8 +154,9 @@ export default {
     }
   },
   onLoad (option) {
+
+    console.log(option.item, 321);
     this.getGoodsKindList()
-    // console.log(option, 321);
     this.categoriesList = uni.getStorageSync('categoriesList')
     // console.log(this.categoriesList);
     this.rightList = this.categoriesList.filter(item => {
@@ -126,7 +168,6 @@ export default {
       }
     })
     this.goodsDetail = goodsList[0]
-    console.log('this.goodsDetail', this.goodsDetail);
     this.leftList = this.categoriesList.filter(item => {
       return item.goodsKind != '全部商品'
     })
@@ -167,7 +208,7 @@ export default {
       this.noCustomerShow = false
     },
     confirmTwo (e) {
-      console.log(e.value);
+      // console.log(e.value);
       this.goodsDetail.tally = e.value
       this.noCustomerShow = false
     },
@@ -187,7 +228,7 @@ export default {
     },
     // 点击删除货品
     del () {
-      console.log('del');
+      // console.log('del');
       this.delshow = true
     },
     // 删除弹出框的取消按钮
@@ -223,15 +264,144 @@ export default {
     },
     stop () {
       console.log('stop');
+      // console.log(this.goodsDetail.state);
+      // console.log('this.goodsDetail', this.goodsDetail.state);
+      this.stopshow = true
+    },
+    // 停用货品的取消
+    stopCancel () {
+      this.stopshow = false
+    },
+    // 停用货品的确定
+    stopConfirm () {
+      // console.log('确定停用');
+      // console.log('this.goodsDetail', this.goodsDetail.state);
+      // 1.首先将多维的对象数组遍历 得到的结果是一个二维数组
+      const arr = this.categoriesList.map(item => {
+        return item.children.map(j => {
+          return j
+        })
+      })
+      // 2.再将二位数组展开平铺,得到的结果是一个一维数组
+      var newArr = arr.reduce(function (pre, curr, index, array) {
+        return pre.concat(curr);
+      })
+      // 3.这样就可以对这个数组进行筛选,将不需要的删除掉,得到一个筛选过后的一维数组
+      newArr.forEach(item => {
+        // console.log(item.goodsName, this.goodsDetail.goodsName);
+        console.log(item.goodsName, this.goodsDetail.goodsName);
+        if (item.goodsName === this.goodsDetail.goodsName) {
+          item.state = '未启用'
+        }
+      })
+      console.log('newArr', newArr);
+      this.categoriesList = transformListToTree([...newArr, ...this.kindList], '')
+      // console.log('abo', abo);
+      uni.setStorageSync('categoriesList', this.categoriesList)
+      uni.navigateBack({
+        delta: 1
+      });
+    },
+    start () {
+      this.goodsDetail.state = '启用'
+      const arr = this.categoriesList.map(item => {
+        return item.children.map(j => {
+          return j
+        })
+      })
+      // 2.再将二位数组展开平铺,得到的结果是一个一维数组
+      var newArr = arr.reduce(function (pre, curr, index, array) {
+        return pre.concat(curr);
+      })
+      // 3.这样就可以对这个数组进行筛选,将不需要的删除掉,得到一个筛选过后的一维数组
+      newArr.forEach(item => {
+        // console.log(item.goodsName, this.goodsDetail.goodsName);
+        console.log(item.goodsName, this.goodsDetail.goodsName);
+        if (item.goodsName === this.goodsDetail.goodsName) {
+          item.state = '启用'
+        }
+      })
+      console.log('newArr', newArr);
+      this.categoriesList = transformListToTree([...newArr, ...this.kindList], '')
+      // console.log('abo', abo);
+      uni.setStorageSync('categoriesList', this.categoriesList)
     },
     save () {
       console.log('save');
+      uni.navigateBack({
+        delta: 1
+      });
     }
   },
 }
 
 </script>
 <style scoped lang='scss'>
+.stop-page {
+  background-color: #f4f5f7;
+  height: 600px;
+
+  .stop-left {
+    background-color: #fff;
+    padding: 20px 10px;
+
+    .stop-txt {
+      margin-bottom: 10px;
+
+      // margin-right: 5px;
+      .stop-text {
+        margin-left: 10px;
+      }
+
+      .type {
+        width: 30px;
+        padding: 5px;
+        height: 20px;
+        background-color: #daf5fe;
+        color: #4684b2
+      }
+    }
+  }
+
+
+
+  .delOrStop {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    .del {
+      width: 150px;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      border: 1px solid #f13636;
+      color: #f13636;
+      border-radius: 25px;
+    }
+
+    .stop {
+      width: 150px;
+      height: 50px;
+      border: 1px solid #15cf34;
+      line-height: 50px;
+      text-align: center;
+      color: #15cf34;
+      border-radius: 25px;
+
+
+    }
+
+
+  }
+}
+
 .page {
   background-color: #f4f5f7;
   height: 600px;

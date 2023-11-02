@@ -56,6 +56,15 @@
             "navigationBarTextStyle":"black",
         "navigationBarBackgroundColor":"#ffffff"
 					}
+				},
+        {
+					"path": "goods_add/kind_manage",
+					"style": {
+						"navigationBarTitleText": "分类管理",
+						"enablePullDownRefresh": true,
+            "navigationBarTextStyle":"black",
+        "navigationBarBackgroundColor":"#ffffff"
+					}
 				}
       ]
     }

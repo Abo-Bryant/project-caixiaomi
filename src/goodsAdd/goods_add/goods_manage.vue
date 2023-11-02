@@ -7,17 +7,27 @@
       </scroll-view>
       <scroll-view scroll-y class="right">
         <view class="cate" v-for="item in rightList" :key="item">
-          <!-- <view class="title">{{ item.cat_name }}</view> -->
           <u-cell-group>
-            <u-cell class="title" :title="item.goodsName" isLink
-              :url="`/goodsAdd/goods_add/goods_detail?item=${item.goodsName}`"></u-cell>
+            <u-cell class="title" isLink :url="`/goodsAdd/goods_add/goods_detail?item=${item.goodsName}`">
+              <view slot="title" class="u-slot-title">
+                <view class="u-cell-text">
+                  <text v-if="item.state === '未启用'"
+                    style="width: 30px; padding: 5px; height: 20px;background-color: #a7a7a72a;color:#fff;margin-right: 10px;">停用</text>
+                  {{ item.goodsName }}
+                  <text class="type"
+                    style="width: 30px; padding: 5px; height: 20px;background-color: #daf5fe;color:#4684b2;margin-left: 10px;">{{
+                      item.packagingType }}</text>
+                </view>
+
+              </view>
+            </u-cell>
           </u-cell-group>
 
         </view>
       </scroll-view>
     </view>
     <view class="bottom">
-      <navigator url="">
+      <navigator url="/goodsAdd/goods_add/kind_manage">
         <u-button class="bottom-btn">分类管理</u-button>
       </navigator>
       <navigator :url="`/goodsAdd/goods_add/index?Classify=${categoriesList}`">
@@ -175,11 +185,31 @@ export default {
     ;
     flex: 1;
 
-    .title {
-      background-color: #fff;
-      margin: 18rpx 0 21rpx;
-      text-align: center;
+    .cate {
+      // display: flex;
+
+      .title {
+        background-color: #fff;
+        margin: 18rpx 0 21rpx;
+        text-align: center;
+
+        .type {
+          width: 30px;
+          height: 20px;
+          background-color: #1d9d60;
+          display: block;
+        }
+
+        .u-slot-title {
+          .u-cell-text {}
+
+        }
+
+      }
+
+
     }
+
   }
 }
 
